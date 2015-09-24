@@ -4,7 +4,7 @@
  *
  * Copyright 2015 ruhley
  *
- * 2015-09-17 08:24:38
+ * 2015-09-24 12:19:35
  *
  */
 if (typeof module !== "undefined" && typeof exports !== "undefined" && module.exports === exports){
@@ -55,12 +55,16 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     }
                     $scope.initConfig();
 
-                    $document.on('click', function (evt) {
-                        if ($scope.find(evt.target).length === 0) {
-                            $scope.log('Color Picker: Document Hide Event');
-                            $scope.hide();
-                        }
+                    $scope.$on('$destroy', function () {
+                        $document.off('click', $scope.handleClick);
                     });
+                };
+
+                $scope.handleClick = function (evt) {
+                    if ($scope.find(evt.target).length === 0) {
+                        $scope.log('Color Picker: Document Hide Event');
+                        $scope.hide();
+                    }
                 };
 
                 $scope.initConfig = function() {
@@ -91,15 +95,23 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     // force the grid selection circle to redraw and fix its position
                     $scope.saturationUpdate();
                     $scope.lightnessUpdate();
+
+                    $document.on('click', $scope.handleClick);
                 };
 
                 $scope.hide = function (apply) {
+                    if (!$scope.visible) {
+                        return;
+                    }
+
                     $scope.log('Color Picker: Hide Event');
                     $scope.visible = false;
 
                     if (apply !== false) {
                         $scope.$apply();
                     }
+
+                    $document.off('click', $scope.handleClick);
                 };
 
                 $scope.update = function () {
@@ -379,25 +391,11 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                         results = context.querySelectorAll(selector);
 
-                    } else {
-                        if ($scope.contains(context, selector)) {
-                            results.push(selector);
-                        }
+                    } else if (context.contains(selector)) {
+                        results.push(selector);
                     }
 
                     return angular.element(results);
-                };
-
-                $scope.contains = function (a, b) {
-                    if (b) {
-                        while ((b = b.parentNode)) {
-                            if (b === a) {
-                                return true;
-                            }
-                        }
-                    }
-
-                    return false;
                 };
 
                 $scope.offset = function (el, type) {
