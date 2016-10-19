@@ -2,10 +2,6 @@
   "name": "angular-color-picker",
   "description": "Color Picker Directive For AngularJS",
   "version": "0.7.0",
-  /*"main": [
-    "angularjs-color-picker.js",
-    "angularjs-color-picker.css"
-  ],*/
   "dependencies": {},
   "repository": {
     "type": "git",
